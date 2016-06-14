@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	<context:annotation-config />
+	<context:component-scan base-package="com.qs" />
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>classpath:jdbc.properties</value>
+		</property>
+	</bean>
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${dtss.jdbc.driver}" />
+		<property name="jdbcUrl" value="${dtss.jdbc.url}" />
+		<property name="user" value="${dtss.jdbc.user}" />
+		<property name="password" value="${dtss.jdbc.password}" />
+
+		<property name="minPoolSize" value="${dtss.jdbc.minpoolsize}" />
+		<property name="maxPoolSize" value="${dtss.jdbc.maxpoolsize}" />
+		<property name="initialPoolSize" value="${dtss.jdbc.initialpoolsize}" />
+		<property name="acquireIncrement" value="${dtss.jdbc.acquireincrement}" />
+		<property name="maxIdleTime" value="${dtss.jdbc.maxidletime}" />
+		<property name="idleConnectionTestPeriod" value="${dtss.jdbc.idleconnectiontestperiod}" />
+		<property name="maxStatements" value="${dtss.jdbc.maxstatements}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<!--
+					<prop key="hibernate.dialect">${hibernate.dialect}</prop> <prop
+					key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				-->
+			</props>
+		</property>
+		<property name="packagesToScan" value="com.qs.entity" />
+
+	</bean>
+
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="txManager" />
+
+	<aop:aspectj-autoproxy />
+</beans>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/decorators">
+<excludes>
+<pattern>/front/img.action*</pattern>
+<pattern>/front/img2.action*</pattern>
+</excludes>
+</decorators>
